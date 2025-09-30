@@ -10,8 +10,8 @@ const Auth: React.FC = () => {
   const [dob, setDob] = useState("");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const [generatedOtp, setGeneratedOtp] = useState(""); 
-  const [otpSent, setOtpSent] = useState(false); 
+  const [generatedOtp, setGeneratedOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
 
   const generateOtp = () => {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -38,14 +38,12 @@ const Auth: React.FC = () => {
     }
 
     if (otp === generatedOtp) {
-      if (isSignup) {
-        console.log("Signup Data:", { name, dob, email, otp });
-        alert("Signed up successfully! Redirecting...");
-      } else {
-        console.log("Signin Data:", { email, otp });
-        alert("Signed in successfully! Redirecting...");
-      }
-      navigate("/homepage");
+      const userData = isSignup
+        ? { name, email }
+        : { name: "Existing User", email }; // fallback for Sign In
+
+      alert(isSignup ? "Signed up successfully!" : "Signed in successfully!");
+      navigate("/homepage", { state: userData });
 
       // Reset form
       setName("");
@@ -62,14 +60,14 @@ const Auth: React.FC = () => {
   return (
     <div className="flex flex-col md:flex-row h-screen w-screen">
       {/* Left Side - Form */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center  px-8 md:px-30 bg-white relative">
+      <div className="w-full md:w-1/2 flex flex-col justify-center px-8 md:px-20 bg-white relative">
         {/* Logo */}
-        <div className=" text-center md:text-start flex space-x-3 absolute top-3 left-5">
+        <div className="flex space-x-3 text-5xl font-bold mt-10 ml-30 text-center md:text-start md:mt-0 md:absolute md:top-4 md:left-2 md:ml-5 md:text-3xl">
           <img src={Logo} alt="logo" className="h-6" />
           <h1 className="text-xl font-semibold">HD</h1>
         </div>
 
-        <h2 className="text-3xl font-bold mt-30 text-center md:text-start md:mt-5">
+        <h2 className="text-3xl font-bold mt-5 text-center md:text-start">
           {isSignup ? "Sign Up" : "Sign In"}
         </h2>
         <p className="text-gray-500 mb-6 text-center md:text-start py-2">
@@ -135,13 +133,13 @@ const Auth: React.FC = () => {
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-            disabled={!email && !otpSent}
+            disabled={!email || (otpSent && !otp)}
           >
             {otpSent ? (isSignup ? "Sign Up" : "Sign In") : "Send OTP"}
           </button>
         </form>
 
-        <p className="text-sm mt-6 text-gray-600">
+        <p className="text-sm mt-6 text-gray-600 text-center md:text-start">
           {isSignup ? "Already have an account?" : "Need an account?"}{" "}
           <button
             onClick={() => {
